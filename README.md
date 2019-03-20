@@ -1,46 +1,46 @@
 # kubernetes-monitoring
 
-# --- INSTALL HELM ---
+# Install and Configure HELM 
 #### Apply the tiller RBAC policy 
-kubectl apply -f tiller/tiller-rbac.yaml`
+$ kubectl apply -f tiller/tiller-rbac.yaml`
 #### Initilize tiller on the Kubernetes cluster
-helm init --service-account tiller`
+$ helm init --service-account tiller`
 
-# --- SET ENVIRONMENT ---
-export NAMESPACE=monitoring
+# Setup Environment
+$ export NAMESPACE=monitoring
 
 prometheus
 
-# --- DEPLOY PROMETHEUS ---
+# Deploy Prometheus 
 #### Create a namespace 
-kubectl create ${NAMESPACE}  monitoring`
+$ kubectl create ${NAMESPACE}  monitoring`
 #### Switch position to namespace monitoring
-kubectl config set-context $(kubectl config current-context) --namespace=${NAMESPACE} `
+$ kubectl config set-context $(kubectl config current-context) --namespace=${NAMESPACE} `
 #### Apply the prometheus RBAC policy spec
-kubectl apply -f prometheus/prometheus-rbac.yaml`
+$ kubectl apply -f prometheus/prometheus-rbac.yaml`
 #### Apply the prometheus config-map spec
-kubectl apply -f prometheus/prometheus-config-map.yaml`
+$ kubectl apply -f prometheus/prometheus-config-map.yaml`
 
 #### Deploy the Prometheus application 
-kubectl apply  -f prometheus/prometheus-deployment.yaml`\
-kubectl get pods`
+$ kubectl apply  -f prometheus/prometheus-deployment.yaml`\
+$ kubectl get pods`
 
 ## Deploy Grafana
 #### Install the grafana Helm chart
-helm install -n grafana -f grafana/values.yaml stable/grafana
+$ helm install -n grafana -f grafana/values.yaml stable/grafana
 
 #### Collect and record the secret
-kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
+$ kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
 
 #### Check the status of the service
-kubectl get svc --namespace=${NAMESPACE}
+$ kubectl get svc --namespace=${NAMESPACE}
 
 #### Extract the POD name and forward the Port
-export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace monitoring port-forward $POD_NAME 3000
+$ export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
+$ kubectl --namespace monitoring port-forward $POD_NAME 3000
 
 #### Open a web browser, navigate to the grafana web UI, and login
-http://127.0.0.1:3000
+$ http://127.0.0.1:3000
 => User Name:* admin
 => Pasword:* <Output from Above>
 
