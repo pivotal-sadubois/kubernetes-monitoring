@@ -1,9 +1,9 @@
 # kubernetes-monitoring
 
 # --- INSTALL HELM ---
-# Apply the tiller RBAC policy 
+#### Apply the tiller RBAC policy 
 kubectl apply -f tiller/tiller-rbac.yaml`
-# Initilize tiller on the Kubernetes cluster
+#### Initilize tiller on the Kubernetes cluster
 helm init --service-account tiller`
 
 # --- SET ENVIRONMENT ---
@@ -12,46 +12,46 @@ export NAMESPACE=monitoring
 prometheus
 
 # --- DEPLOY PROMETHEUS ---
-# Create a namespace 
+#### Create a namespace 
 kubectl create ${NAMESPACE}  monitoring`
-# Switch position to namespace monitoring
+#### Switch position to namespace monitoring
 kubectl config set-context $(kubectl config current-context) --namespace=${NAMESPACE} `
-# Apply the prometheus RBAC policy spec
+#### Apply the prometheus RBAC policy spec
 kubectl apply -f prometheus/prometheus-rbac.yaml`
-# Apply the prometheus config-map spec
+#### Apply the prometheus config-map spec
 kubectl apply -f prometheus/prometheus-config-map.yaml`
 
-# Deploy the Prometheus application 
+#### Deploy the Prometheus application 
 kubectl apply  -f prometheus/prometheus-deployment.yaml`\
 kubectl get pods`
 
 ## Deploy Grafana
-# Install the grafana Helm chart
+#### Install the grafana Helm chart
 helm install -n grafana -f grafana/values.yaml stable/grafana
 
-# Collect and record the secret
+#### Collect and record the secret
 kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
 
-# Check the status of the service
+#### Check the status of the service
 kubectl get svc --namespace=${NAMESPACE}
 
-# Extract the POD name and forward the Port
+#### Extract the POD name and forward the Port
 export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
 kubectl --namespace monitoring port-forward $POD_NAME 3000
 
-# Open a web browser, navigate to the grafana web UI, and login
+#### Open a web browser, navigate to the grafana web UI, and login
 http://127.0.0.1:3000
 => User Name:* admin
 => Pasword:* <Output from Above>
 
-# Configure the prometheus plug-in 
+#### Configure the prometheus plug-in 
 Select > *Add data source*
  => Name: *Prometheus*
  => Type: *Prometheus*
  => URL: hhttp://prometheus.monitoring.svc.cluster.local:9090
  => Select > *Save and Test*
 
-# Import the Kubernetes Dashboard
+#### Import the Kubernetes Dashboard
 
 Select > *"+"* in left pane then *"Import"*
 
