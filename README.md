@@ -1,17 +1,15 @@
 # kubernetes-monitoring
 
-# Install and Configure HELM 
+## Install and Configure HELM 
 #### Apply the tiller RBAC policy 
 $ kubectl apply -f tiller/tiller-rbac.yaml`
 #### Initilize tiller on the Kubernetes cluster
 $ helm init --service-account tiller`
 
-# Setup Environment
+## Setup Environment
 $ export NAMESPACE=monitoring
 
-prometheus
-
-# Deploy Prometheus 
+## Deploy Prometheus 
 #### Create a namespace 
 $ kubectl create ${NAMESPACE}  monitoring`
 #### Switch position to namespace monitoring
